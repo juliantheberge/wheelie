@@ -1,0 +1,1 @@
+export function wtf() { return 'hello world'}

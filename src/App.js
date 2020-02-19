@@ -1,24 +1,22 @@
 import React from 'react';
-import logo from './logo.svg';
+// import * as W from "./wheel.tsx";
+import * as W from './wheel'
+// import { Dial } from './original.tsx';
 import './App.css';
+
+let data = [
+  {
+    name: ""
+  },
+  // {
+  //   name: "two"
+  // }
+]
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className = "menu">
+      <W.Wheel items = {data} organization = "opposite" />
     </div>
   );
 }
