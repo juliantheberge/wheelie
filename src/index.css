@@ -3,18 +3,16 @@
   left: 50%;
   top: 50%;
 }
-.circle-base,
-.circle-arrangment {
-  border-radius: 100%;
-}
-.circle-arrangment {
+.wheel-arrangment {
   position: relative;
   width: 20px;
   height: 20px;
+  background: #000;
 }
 body {
   background: #f5deb3;
 }
 * {
   font-family: "Roboto";
+  transition: 600ms;
 }

@@ -10,7 +10,8 @@ function genCoord() {
 	return {
 		name: genWord(),
 		x: 0,
-		y: 0
+        y: 0,
+        arc: 0
 	}
 }
 

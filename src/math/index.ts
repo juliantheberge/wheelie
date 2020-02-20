@@ -6,7 +6,7 @@ import * as W from '../wheel'
  * should we add radius so that we have very specific coords rather than ratios
  */
 
-const TOTAL = Math.PI * 2;
+export const TOTAL = Math.PI * 2;
 
 export function getCoords(max: number, items: W.Item[], radius: number) {
     if (items.length > max || max > 360)
@@ -35,9 +35,7 @@ function slices(max: number, items: W.Item[], radius: number) {
 
         item.y = y;
         item.x = x;
-
-        // for now I don't think we need arc
-        // item.arc = itemArc;
+        item.arc = itemArc;
 
         return item;
     })

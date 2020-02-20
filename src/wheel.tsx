@@ -1,9 +1,8 @@
 import * as React from 'react';
-import * as M from './math/index'
-
 
 /** Organization */
 
+import * as M from './math/index'
 /** Item
  * wheel menu items, will have an extensible api
  */
@@ -12,6 +11,7 @@ export interface Item {
     name: string;
     x: number;
     y: number;
+    arc: number;
 }
 
 /** Wheel
@@ -30,21 +30,30 @@ export interface WheelProps {
 
 interface WheelState {
     circle: React.ReactElement | null;
+    rotate: number; // actual radians
+    rotations: number; // counter
     error?: string ;
 }
 
 export class Wheel extends React.Component<WheelProps, WheelState> {
+    arc: number;
     constructor(props: WheelProps) {
-        super(props)
+        super(props);
         this.state = {
-            circle: null
-        }
+            circle: null,
+            rotate: 0,
+            rotations: 0
+        };
+        this.arc = M.TOTAL / props.maxItems;
+        this.clockwise = this.clockwise.bind(this);
+        this.counterClockwise = this.counterClockwise.bind(this);
     }
 
 
     componentDidMount() {
-        this.organize()
+        this.organize();
     }
+
 
     organize() {
         if (this.props.organization === "stacking") {
@@ -57,10 +66,16 @@ export class Wheel extends React.Component<WheelProps, WheelState> {
     // maybe this isn't where this should happen
 
     stacking() {
+        console.log(this.state)
         let {maxItems, items, itemRadius} = this.props;
-        let menuItems = M.getCoords(maxItems, items, itemRadius)
+        let menuItems = M.getCoords(maxItems, items, 50)
         let slices = menuItems.map((item: Item, index: number) => {
-            return <MenuItem key={index*Math.random()} item = {item} index = {index}/>
+            return <Spoke 
+                key={index*Math.random()} 
+                item = {item} 
+                index = {index} 
+                rotate = {this.state.rotate}
+                rotations = {this.state.rotations}/>
         })
         return this.circle(slices)
     }
@@ -75,15 +90,21 @@ export class Wheel extends React.Component<WheelProps, WheelState> {
             borderRadius: "100%",
             width: width.px(),
             height: height.px(),
-            marginLeft: Dimension.px(width.half().neg()),
-            marginTop: Dimension.px(height.half().neg()),
+            marginLeft: width.half().neg().px(),
+            marginTop: height.half().neg().px(),
             display: "flex",
             justifyContent: "center",
             alignItems: "center"
         }
 
+        let rotate = {
+            transform: `rotate(${this.state.rotate}rad)`
+        }
+
         this.setState({
-            circle: <div style={circleStyle}><div className="circle-arrangment">{slices}</div></div>
+            circle: <div style={circleStyle}>
+                <div style={rotate} className="wheel-arrangment">{slices}</div>
+            </div>
         })
     }
 
@@ -93,12 +114,29 @@ export class Wheel extends React.Component<WheelProps, WheelState> {
         })
     }
 
+    clockwise() {
+        this.setState({
+            rotate: this.state.rotate + this.arc,
+            rotations: this.state.rotations+1
+        }, () => this.organize())
+    }
+    counterClockwise() {
+        this.setState({
+            rotate: this.state.rotate - this.arc,
+            rotations: this.state.rotations-1
+        }, () => this.organize())
+    }
+
     render() {
         if (this.state.error) {
             return <p>{this.state.error}</p>
         } else {
             return <React.Fragment>
                 {this.state.circle}
+                <div>
+                    <button onClick = {this.clockwise} >clockwise</button>
+                    <button onClick = {this.counterClockwise} >counter clockwise</button>
+                </div>
             </React.Fragment>
         }
     }
@@ -111,9 +149,11 @@ export class Wheel extends React.Component<WheelProps, WheelState> {
 interface MenuItemProps {
     item: Item;
     index: number;
+    rotations: number;
+    rotate: number;
 }
 
-function MenuItem(props: MenuItemProps) {
+function Spoke(props: MenuItemProps) {
     let d = 20;
     let width = new Dimension(d);
     let height = new Dimension(d);
@@ -123,26 +163,26 @@ function MenuItem(props: MenuItemProps) {
         justifyContent: "center",
         alignItems: "center",
         background: "tomato",
-        borderRadius: "100%",
+        color: "wheat",
+        // borderRadius: "100%",
         width: width.px(),
-        height: height.px(),
+        height: height.px()
     };
 
     let withPosition = { ...sliceStyle, ...genCoordinates(props.item.x, props.item.y)} as React.CSSProperties
 
-    console.log({
-        sliceStyle,
-        withPosition
-    })
+    let withCounterRotation = {...withPosition, ...{
+        transform: `rotate(${-1*props.rotate}rad)`
+    }}
 
-    return <div key={props.index + Math.random()} style = {withPosition}>
+    return <div key={props.index + Math.random()} style = {withCounterRotation}>
         <div style = {{
                 display:"flex",
                 justifyContent: "center",
                 alignItems: "center",
-                flexDirection: "column"
+                flexDirection: "column",
             }}>
-            {/* <p>{props.item.name}</p> */}
+            <p>{props.index}</p>
         </div>
     </div>
 }
@@ -175,14 +215,14 @@ function genCoordinates(x: number, y: number, opts?: CoordOpts) : StyleCoords {
 
     if (opts && !opts.clockwise) {
         return {
-            left: Dimension.px(base.x.neg()),
-            top: Dimension.px(base.y.neg())
+            left: base.x.neg().px(),
+            top: base.y.neg().px()
         }
     }
 
     return {
-        left: Dimension.px(base.x.v()),
-        top: Dimension.px(base.y.neg())
+        left: base.x.px(),
+        top: base.y.neg().px()
     }
 }
 
@@ -199,20 +239,20 @@ class Dimension {
         return length.toString() + "px";
     }
 
-    px(){
-        return this.length.toString() + "px";
+    neg() {
+        return new Dimension(this.length * -1);
     }
 
-    neg() {
-        return this.length * -1;
+    half() {
+        return new Dimension(this.length / 2)
     }
 
     v() {
         return this.length;
     }
 
-    half() {
-        return new Dimension(this.length / 2)
+    px(){
+        return this.length.toString() + "px";
     }
 }
 
