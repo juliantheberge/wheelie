@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as M from './math/index'
 
 
 /** Organization */
@@ -41,6 +42,8 @@ export class Wheel extends React.Component {
             return <Circle item = {item} index = {index}/>
         })
 
+        console.log(M.getCoords(8, this.props.items))
+
         return this.circle(slices)
     }
 
@@ -58,14 +61,8 @@ export class Wheel extends React.Component {
             alignItems: "center"
         }
 
-        let oneCircleStyle = Object.assign(
-            circleStyle, {
-                top: "-50px"
-            }
-        )
-
         this.setState({
-            circle: <div style={oneCircleStyle}><div className="circle-arrangment">{slices}</div></div>
+            circle: <div style={circleStyle}><div className="circle-arrangment">{slices}</div></div>
         })
     }
 
@@ -104,10 +101,14 @@ function Circle(props) {
         borderRadius: "100%"
     }
 
+    // what does this do again?
     let withCentering = generateAbsoluteCenter(sliceStyle, width, height)
 
+    let itemOneStyle = Object.assign(
+        sliceStyle, rotePosition(props.index)
+    )
 
-    return <div key={props.index + Math.random()} style = {sliceStyle}>{props.item.name}</div>
+    return <div key={props.index + Math.random()} style = {itemOneStyle}>{props.item.name}</div>
 }
 
 
@@ -125,6 +126,20 @@ function generateAbsoluteCenter(styles, width, height) {
     return Object.assign(styles, horizontalAlign, verticalAlign)
 }
 
+
+function rotePosition(index) {
+    console.log('rote position', index)
+    switch(index) {
+        case 0:
+            return { top: "-50px" }
+        case 1:
+            return { top: "50px" }
+        case 2:
+            return { top: "50px" }
+        default:
+            return { top: 'hopefully this throws' }
+    }
+}
 
 
 class Dimension {

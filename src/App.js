@@ -6,11 +6,14 @@ import './App.css';
 
 let data = [
   {
-    name: ""
+    name: "one"
   },
-  // {
-  //   name: "two"
-  // }
+  {
+    name: "two"
+  },
+  {
+    name: "three"
+  },
 ]
 
 function App() {
