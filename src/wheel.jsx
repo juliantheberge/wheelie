@@ -37,12 +37,15 @@ export class Wheel extends React.Component {
     opposite() {
         let sliceStyle = {
             border: "1px solid pink"
-        }
-        let slices = (this.props.items || []).map((item, index) => {
-            return <Circle item = {item} index = {index}/>
+        };
+
+        console.log(M.getCoords(3, this.props.items, 50));
+
+        let items = M.getCoords(3, this.props.items, 50)
+        let slices = (items || []).map((item, index) => {
+            return <MenuItem item = {item} index = {index}/>
         })
 
-        console.log(M.getCoords(8, this.props.items))
 
         return this.circle(slices)
     }
@@ -87,7 +90,7 @@ export class Wheel extends React.Component {
  * we will have props soon
  */
 
-function Circle(props) {
+function MenuItem(props) {
     let width = new Dimension(20);
     let height = new Dimension(20)
     let sliceStyle = {
@@ -102,13 +105,19 @@ function Circle(props) {
     }
 
     // what does this do again?
-    let withCentering = generateAbsoluteCenter(sliceStyle, width, height)
+    // let withCentering = generateAbsoluteCenter(sliceStyle, width, height)
 
-    let itemOneStyle = Object.assign(
-        sliceStyle, rotePosition(props.index)
+    let withPosition = Object.assign(
+        sliceStyle, {
+            top: `${-1 * props.item.y}px`,
+            left: `${props.item.x}px`
+        }
     )
+    // let withPosition = Object.assign(
+    //     sliceStyle, rotePosition(props.index)
+    // )
 
-    return <div key={props.index + Math.random()} style = {itemOneStyle}>{props.item.name}</div>
+    return <div key={props.index + Math.random()} style = {withPosition}>{props.item.name}</div>
 }
 
 
@@ -123,6 +132,7 @@ function generateAbsoluteCenter(styles, width, height) {
         top: "50%",
         marginTop: Dimension.px(height.neg()/2)
     }
+
     return Object.assign(styles, horizontalAlign, verticalAlign)
 }
 

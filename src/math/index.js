@@ -9,13 +9,13 @@ const TOTAL = Math.PI * 2;
 const sq = (base) => Math.square(base);
 const rt = (number) => Math.sqrt(number);
 
-export function getCoords(max, items) {
+export function getCoords(max, items, radius) {
     if (items.length > max || max > 360)
-        throw "too many items";
-    else if (items.length == 0)
-        throw "too few items";
+        throw Error("too many items");
+    else if (items.length === 0)
+        throw Error("too few items");
     else
-        return slices(max, items);
+        return slices(max, items, radius);
 }
 
 // maybe we add the triangle object to the item itself?
@@ -26,17 +26,17 @@ export function getCoords(max, items) {
 // Math.cos(rads) * r == x
 // Math.tan(rads) * x == y
 
-function slices(max, items) {
+function slices(max, items, radius) {
     let sliceArc = TOTAL / max;
 
     return items.map((item, index) => {
         let itemArc = sliceArc * (index);
 
-        let x = Math.cos(itemArc) * 1; // leaving the 1 as a placeholder for the radius
-        let y = Math.tan(itemArc) * x;
+        let y = Math.cos(itemArc) * radius; // leaving the 1 as a placeholder for the radius
+        let x = Math.tan(itemArc) * y;
 
-        item.x = x;
         item.y = y;
+        item.x = x;
         item.arc = itemArc;
 
         return item;
