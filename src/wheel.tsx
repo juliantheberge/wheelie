@@ -21,6 +21,8 @@ export interface Item {
 export interface WheelProps {
     items: Item[];
     organization: string;
+    // unit: string
+    // clockwise: boolean;
 }
 
 interface WheelState {
@@ -43,22 +45,18 @@ export class Wheel extends React.Component<WheelProps, WheelState> {
 
     organize() {
         if (this.props.organization === "opposite") {
-            return this.opposite()
+            return this.stacking()
         } else {
             this.error("stacking organization not supported yet")
         }
     }
 
-    opposite() {
-        let sliceStyle = {
-            border: "1px solid pink"
-        };
+    // maybe this isn't where this should happen
 
-        console.log(M.getCoords(5, this.props.items, 50));
-
-        let items = M.getCoords(5, this.props.items, 50)
+    stacking() {
+        let items = M.getCoords(5, this.props.items, 80)
         let slices = (items || []).map((item: Item, index: number) => {
-            return <MenuItem item = {item} index = {index}/>
+            return <MenuItem key={index*Math.random()} item = {item} index = {index}/>
         })
 
 
@@ -112,67 +110,64 @@ interface MenuItemProps {
 
 function MenuItem(props: MenuItemProps) {
     let width = new Dimension(20);
-    let height = new Dimension(20)
+    let height = new Dimension(20);
     let sliceStyle = {
         position: "absolute",
-        background: "green",
+        background: "",
         display:"flex",
         justifyContent: "center",
         alignItems: "center",
         width: width.px(),
         height: height.px(),
         borderRadius: "100%"
-    }
+    };
 
-    // what does this do again?
-    // let withCentering = generateAbsoluteCenter(sliceStyle, width, height)
-
-    let withPosition = Object.assign(
-        sliceStyle, {
-            top: `${-1 * props.item.y}px`,
-            left: `${props.item.x}px`
-        }
-    )
-    // let withPosition = Object.assign(
-    //     sliceStyle, rotePosition(props.index)
-    // )
+    let withPosition = { ...sliceStyle, ...genCoordinates(props.item.x, props.item.y)} as React.CSSProperties
 
     return <div key={props.index + Math.random()} style = {withPosition}>{props.item.name}</div>
 }
 
 
-
-function generateAbsoluteCenter(styles: React.CSSProperties, width: Dimension, height: Dimension) {
-    let horizontalAlign = {
-        left: "50%",
-        marginLeft: Dimension.px(width.neg()/2),
-    }
-
-    let verticalAlign = {
-        top: "50%",
-        marginTop: Dimension.px(height.neg()/2)
-    }
-
-    return Object.assign(styles, horizontalAlign, verticalAlign)
+// opts will have to move all the way up to the props
+interface CoordOpts {
+    clockwise?: boolean;
+    unit?: string;
 }
 
-// this should be phased out asap, was just to understand what the math needed
+interface MathCoords {
+    x: Dimension;
+    y: Dimension;
+    [k: string] : Dimension; // why does typescript always demand this?
+}
 
-function rotePosition(index: number) {
-    console.log('rote position', index)
-    switch(index) {
-        case 0:
-            return { top: "-50px" }
-        case 1:
-            return { top: "50px" }
-        case 2:
-            return { top: "50px" }
-        default:
-            return { top: 'hopefully this throws' }
+interface StyleCoords {
+    left: string;
+    top: string;
+}
+
+// maybe we get another class to consume Dimension called Cörd?
+
+function genCoordinates(x: number, y: number, opts?: CoordOpts) : StyleCoords {
+    let base: MathCoords = {
+        x: new Dimension(x),
+        y: new Dimension(y)
+    }
+
+    if (opts && !opts.clockwise) {
+        return {
+            left: Dimension.px(base.x.neg()),
+            top: Dimension.px(base.y.neg())
+        }
+    }
+
+    return {
+        left: Dimension.px(base.x.v()),
+        top: Dimension.px(base.y.neg())
     }
 }
 
 
+// also not sure if this will be needed
 class Dimension {
     length: number;
 
@@ -184,7 +179,7 @@ class Dimension {
         return length.toString() + "px";
     }
 
-    px() {
+    px(){
         return this.length.toString() + "px";
     }
 
@@ -196,3 +191,19 @@ class Dimension {
         return this.length;
     }
 }
+
+// not sure if this will be needed
+
+// function generateAbsoluteCenter(styles: React.CSSProperties, width: Dimension, height: Dimension) {
+//     let horizontalAlign = {
+//         left: "50%",
+//         marginLeft: Dimension.px(width.neg()/2),
+//     }
+
+//     let verticalAlign = {
+//         top: "50%",
+//         marginTop: Dimension.px(height.neg()/2)
+//     }
+
+//     return Object.assign(styles, horizontalAlign, verticalAlign)
+// }

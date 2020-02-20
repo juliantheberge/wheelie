@@ -7,8 +7,6 @@ import * as W from '../wheel'
  */
 
 const TOTAL = Math.PI * 2;
-const sq = (base: number) => Math.pow(base, 2);
-const rt = (number: number) => Math.sqrt(number);
 
 export function getCoords(max: number, items: W.Item[], radius: number) {
     if (items.length > max || max > 360)
@@ -48,11 +46,13 @@ function slices(max: number, items: W.Item[], radius: number) {
 
 
 // not sure if I will need these
-function calcY(x: number, r: number) {
-    return rt(sq(r) - sq(x));
-}
+// function calcY(x: number, r: number) {
+//     return rt(sq(r) - sq(x));
+// }
 
-function calcX(y: number, r: number) {
-    return rt(sq(r) - sq(y));
-}
+// function calcX(y: number, r: number) {
+//     return rt(sq(r) - sq(y));
+// }
 
+// const sq = (base: number) => Math.pow(base, 2);
+// const rt = (number: number) => Math.sqrt(number);
