@@ -21,6 +21,7 @@ export interface Item {
 export interface WheelProps {
     items: Item[];
     organization: string;
+    maxItems: number;
     // unit: string
     // clockwise: boolean;
 }
@@ -44,22 +45,20 @@ export class Wheel extends React.Component<WheelProps, WheelState> {
     }
 
     organize() {
-        if (this.props.organization === "opposite") {
+        if (this.props.organization === "stacking") {
             return this.stacking()
         } else {
-            this.error("stacking organization not supported yet")
+            this.error("opposite organization not supported yet")
         }
     }
 
     // maybe this isn't where this should happen
 
     stacking() {
-        let items = M.getCoords(5, this.props.items, 80)
+        let items = M.getCoords(this.props.maxItems, this.props.items, 80)
         let slices = (items || []).map((item: Item, index: number) => {
             return <MenuItem key={index*Math.random()} item = {item} index = {index}/>
         })
-
-
         return this.circle(slices)
     }
 
