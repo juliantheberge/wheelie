@@ -22,6 +22,8 @@ export interface WheelProps {
     items: Item[];
     organization: string;
     maxItems: number;
+    itemRadius: number;
+    // circleRadius: number;
     // unit: string
     // clockwise: boolean;
 }
@@ -55,8 +57,9 @@ export class Wheel extends React.Component<WheelProps, WheelState> {
     // maybe this isn't where this should happen
 
     stacking() {
-        let items = M.getCoords(this.props.maxItems, this.props.items, 80)
-        let slices = (items || []).map((item: Item, index: number) => {
+        let {maxItems, items, itemRadius} = this.props;
+        let menuItems = M.getCoords(maxItems, items, itemRadius)
+        let slices = menuItems.map((item: Item, index: number) => {
             return <MenuItem key={index*Math.random()} item = {item} index = {index}/>
         })
         return this.circle(slices)
@@ -64,8 +67,7 @@ export class Wheel extends React.Component<WheelProps, WheelState> {
 
     circle(slices: React.ReactElement[]) {
         let circleStyle = {
-            background: "white",
-            border: "1px solid black",
+            background: "tomato",
             borderRadius: "100%",
             width: "100px",
             height: "100px",
@@ -112,13 +114,12 @@ function MenuItem(props: MenuItemProps) {
     let height = new Dimension(20);
     let sliceStyle = {
         position: "absolute",
-        background: "",
+        background: "white",
         display:"flex",
         justifyContent: "center",
         alignItems: "center",
         width: width.px(),
         height: height.px(),
-        borderRadius: "100%"
     };
 
     let withPosition = { ...sliceStyle, ...genCoordinates(props.item.x, props.item.y)} as React.CSSProperties
