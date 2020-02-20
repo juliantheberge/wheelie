@@ -1,3 +1,4 @@
+import * as W from '../wheel'
 /**
  * goal is to do the math required to position the elements
  *
@@ -6,10 +7,10 @@
  */
 
 const TOTAL = Math.PI * 2;
-const sq = (base) => Math.square(base);
-const rt = (number) => Math.sqrt(number);
+const sq = (base: number) => Math.pow(base, 2);
+const rt = (number: number) => Math.sqrt(number);
 
-export function getCoords(max, items, radius) {
+export function getCoords(max: number, items: W.Item[], radius: number) {
     if (items.length > max || max > 360)
         throw Error("too many items");
     else if (items.length === 0)
@@ -20,13 +21,12 @@ export function getCoords(max, items, radius) {
 
 // maybe we add the triangle object to the item itself?
 // triangle, a, b, c
-// maybe its just in ratios where c = 1 and we just multiply the whole thing by r when we get it
-// do we even need radius at this point?
+// for now we are passing in radius, but if you pass in 1 it can just give us the ratios
 
 // Math.cos(rads) * r == x
 // Math.tan(rads) * x == y
 
-function slices(max, items, radius) {
+function slices(max: number, items: W.Item[], radius: number) {
     let sliceArc = TOTAL / max;
 
     return items.map((item, index) => {
@@ -37,7 +37,9 @@ function slices(max, items, radius) {
 
         item.y = y;
         item.x = x;
-        item.arc = itemArc;
+
+        // for now I don't think we need arc
+        // item.arc = itemArc;
 
         return item;
     })
@@ -46,11 +48,11 @@ function slices(max, items, radius) {
 
 
 // not sure if I will need these
-function calcY(x, r) {
+function calcY(x: number, r: number) {
     return rt(sq(r) - sq(x));
 }
 
-function calcX(y, r) {
+function calcX(y: number, r: number) {
     return rt(sq(r) - sq(y));
 }
 

@@ -8,17 +8,32 @@ import * as M from './math/index'
  * wheel menu items, will have an extensible api
  */
 
+export interface Item {
+    name: string;
+    x: number;
+    y: number;
+}
+
 /** Wheel
  * this will be the master entry point for the lib
 */
 
-export class Wheel extends React.Component {
-    constructor(props) {
+export interface WheelProps {
+    items: Item[];
+    organization: string;
+}
+
+interface WheelState {
+    circle: React.ReactElement | null;
+    error?: string ;
+}
+
+export class Wheel extends React.Component<WheelProps, WheelState> {
+    constructor(props: WheelProps) {
         super(props)
         this.state = {
             circle: null
         }
-
     }
 
 
@@ -39,10 +54,10 @@ export class Wheel extends React.Component {
             border: "1px solid pink"
         };
 
-        console.log(M.getCoords(3, this.props.items, 50));
+        console.log(M.getCoords(5, this.props.items, 50));
 
-        let items = M.getCoords(3, this.props.items, 50)
-        let slices = (items || []).map((item, index) => {
+        let items = M.getCoords(5, this.props.items, 50)
+        let slices = (items || []).map((item: Item, index: number) => {
             return <MenuItem item = {item} index = {index}/>
         })
 
@@ -50,7 +65,7 @@ export class Wheel extends React.Component {
         return this.circle(slices)
     }
 
-    circle(slices) {
+    circle(slices: React.ReactElement[]) {
         let circleStyle = {
             background: "white",
             border: "1px solid black",
@@ -69,7 +84,7 @@ export class Wheel extends React.Component {
         })
     }
 
-    error(message) {
+    error(message: string) {
         this.setState({
             error: message
         })
@@ -90,7 +105,12 @@ export class Wheel extends React.Component {
  * we will have props soon
  */
 
-function MenuItem(props) {
+interface MenuItemProps {
+    item: Item;
+    index: number;
+}
+
+function MenuItem(props: MenuItemProps) {
     let width = new Dimension(20);
     let height = new Dimension(20)
     let sliceStyle = {
@@ -122,7 +142,7 @@ function MenuItem(props) {
 
 
 
-function generateAbsoluteCenter(styles, width, height) {
+function generateAbsoluteCenter(styles: React.CSSProperties, width: Dimension, height: Dimension) {
     let horizontalAlign = {
         left: "50%",
         marginLeft: Dimension.px(width.neg()/2),
@@ -136,8 +156,9 @@ function generateAbsoluteCenter(styles, width, height) {
     return Object.assign(styles, horizontalAlign, verticalAlign)
 }
 
+// this should be phased out asap, was just to understand what the math needed
 
-function rotePosition(index) {
+function rotePosition(index: number) {
     console.log('rote position', index)
     switch(index) {
         case 0:
@@ -153,12 +174,13 @@ function rotePosition(index) {
 
 
 class Dimension {
+    length: number;
 
-    constructor(length) {
+    constructor(length: number) {
         this.length = length;
     }
 
-    static px(length) {
+    static px(length: number) {
         return length.toString() + "px";
     }
 

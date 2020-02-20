@@ -4,19 +4,27 @@ import * as W from './wheel'
 // import { Dial } from './original.tsx';
 import './App.css';
 
-let data = [
+let data : W.Item[] = [
   {
-    name: "one"
+    name: "one",
+    x: 0,
+    y: 0
   },
   {
-    name: "two"
+    name: "two",
+    x: 0,
+    y: 0
   },
   {
-    name: "three"
+    name: "three",
+    x: 0,
+    y: 0
   },
-  // {
-  //   name: "four"
-  // },
+  {
+    name: "four",
+    x: 0,
+    y: 0
+  },
   // {
   //   name: "five"
   // },
