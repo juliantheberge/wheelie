@@ -14,6 +14,10 @@ function genCoord() {
 	}
 }
 
+function numRange(min: number, max: number) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 export function genData(amount: number): W.Item[] {
 	let data: W.Item[] = [];
 	for (let i = 0; i < amount; i++) {
@@ -22,10 +26,14 @@ export function genData(amount: number): W.Item[] {
 	return data;
 }
 
-export function genItemLimits(max: number, min: number) {
-	let maxItems: number = Math.floor(Math.random() * (max - min + 1)) + min;
+export function genItemLimits(min: number, max: number) {
+    let maxItems: number = numRange(min, max)
+    let radius: number = numRange(maxItems * 15, maxItems*40)
 	return {
 		maxItems,
-		countItems: Math.floor(Math.random() * (maxItems - min + 1)) + min
+        countItems: Math.floor(Math.random() * (maxItems - min + 1)) + min,
+        radius
 	}
 }
+
+

@@ -66,13 +66,17 @@ export class Wheel extends React.Component<WheelProps, WheelState> {
     }
 
     circle(slices: React.ReactElement[]) {
+        let d = 100;
+        let width = new Dimension(d);
+        let height = new Dimension(d);
+
         let circleStyle = {
             background: "tomato",
             borderRadius: "100%",
-            width: "100px",
-            height: "100px",
-            marginLeft: "-50px",
-            marginTop: "-50px",
+            width: width.px(),
+            height: height.px(),
+            marginLeft: Dimension.px(width.half().neg()),
+            marginTop: Dimension.px(height.half().neg()),
             display: "flex",
             justifyContent: "center",
             alignItems: "center"
@@ -110,21 +114,37 @@ interface MenuItemProps {
 }
 
 function MenuItem(props: MenuItemProps) {
-    let width = new Dimension(20);
-    let height = new Dimension(20);
+    let d = 20;
+    let width = new Dimension(d);
+    let height = new Dimension(d);
     let sliceStyle = {
         position: "absolute",
-        background: "white",
-        display:"flex",
+        display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        background: "tomato",
+        borderRadius: "100%",
         width: width.px(),
         height: height.px(),
     };
 
     let withPosition = { ...sliceStyle, ...genCoordinates(props.item.x, props.item.y)} as React.CSSProperties
 
-    return <div key={props.index + Math.random()} style = {withPosition}>{props.item.name}</div>
+    console.log({
+        sliceStyle,
+        withPosition
+    })
+
+    return <div key={props.index + Math.random()} style = {withPosition}>
+        <div style = {{
+                display:"flex",
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "column"
+            }}>
+            {/* <p>{props.item.name}</p> */}
+        </div>
+    </div>
 }
 
 
@@ -189,6 +209,10 @@ class Dimension {
 
     v() {
         return this.length;
+    }
+
+    half() {
+        return new Dimension(this.length / 2)
     }
 }
 

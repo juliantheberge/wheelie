@@ -4,7 +4,7 @@ import './App.css';
 import * as G from './gen-data'
 
 function App() {
-	let limits = G.genItemLimits(12, 8)
+	let limits = G.genItemLimits(4, 8)
 	console.log({ limits })
 	return (
 		<div className="menu">
@@ -12,7 +12,7 @@ function App() {
 				items={G.genData(limits.countItems)}
 				organization="stacking"
 				maxItems={limits.maxItems}
-				itemRadius={100} />
+				itemRadius={limits.radius} />
 			<h1 style={{
 				position: 'fixed',
 				top: 0,
