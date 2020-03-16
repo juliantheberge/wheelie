@@ -134,7 +134,7 @@ export class Wheel extends React.Component<WheelProps, WheelState> {
             return <React.Fragment>
                 {this.state.circle}
                 <div>
-                    <button onClick = {this.clockwise} >clockwise</button>
+                    <button onClick = {this.clockwise}>clockwise</button>
                     <button onClick = {this.counterClockwise} >counter clockwise</button>
                 </div>
             </React.Fragment>
@@ -175,7 +175,7 @@ function Spoke(props: MenuItemProps) {
         transform: `rotate(${-1*props.rotate}rad)`
     }}
 
-    return <div key={props.index + Math.random()} style = {withCounterRotation}>
+    return <div key={props.index + Math.random()} style = {withCounterRotation} className="spoke">
         <div style = {{
                 display:"flex",
                 justifyContent: "center",

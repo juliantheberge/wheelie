@@ -8,11 +8,11 @@
   width: 20px;
   height: 20px;
   background: #000;
+  transition: 600ms;
 }
 body {
   background: #f5deb3;
 }
 * {
   font-family: "Roboto";
-  transition: 600ms;
 }
