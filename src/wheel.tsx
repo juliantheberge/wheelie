@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled, { keyframes } from 'styled-components';
-
+import * as gen from './gen-data';
 /** Organization */
 
 import * as M from './math/index'
@@ -33,7 +33,7 @@ interface WheelState {
     circle: React.ReactElement | null;
     rotate: number; // actual radians
     rotations: number; // counter
-    prev: number;
+    prevRotation: number;
     error?: string ;
 }
 
@@ -45,7 +45,7 @@ export class Wheel extends React.Component<WheelProps, WheelState> {
             circle: null,
             rotate: 0,
             rotations: 0,
-            prev: 0
+            prevRotation: 0
         };
         this.arc = M.TOTAL / props.maxItems;
         this.clockwise = this.clockwise.bind(this);
@@ -76,7 +76,8 @@ export class Wheel extends React.Component<WheelProps, WheelState> {
                 key={index * Math.random()}
                 item = {item}
                 index = {index}
-                prev = {this.state.prev}
+                prevRotation = {this.state.prevRotation}
+                arc = {this.arc}
                 rotate = {this.state.rotate}
                 rotations = {this.state.rotations}/>
         })
@@ -115,14 +116,14 @@ export class Wheel extends React.Component<WheelProps, WheelState> {
         this.setState({
             rotate: this.state.rotate + this.arc,
             rotations: this.state.rotations + 1,
-            prev: this.state.rotate
+            prevRotation: this.state.rotations
         }, () => this.organize())
     }
     counterClockwise() {
         this.setState({
             rotate: this.state.rotate - this.arc,
             rotations: this.state.rotations - 1,
-            prev: this.state.rotate
+            prevRotation: this.state.rotations
         }, () => this.organize())
     }
 
@@ -150,7 +151,8 @@ interface MenuItemProps {
     index: number;
     rotations: number;
     rotate: number;
-    prev: number;
+    prevRotation: number;
+    arc: number;
 }
 
 function Spoke(props: MenuItemProps) {
@@ -168,29 +170,25 @@ function Spoke(props: MenuItemProps) {
         }
     `;
 
-    console.log({
-        prev: props.prev,
-        next: props.rotate,
-        rotations: props.rotations
-    })
-
-    // animation: ${rotate(props.prev, -1*props.rotate)} 600ms ease-in-out;
-    // animation-fill-mode: forwards;
+    let counterRotation = -1*props.rotate; // this is the counter rotation from the center of the wheel
+    let prev = props.rotations > props.prevRotation ? counterRotation+props.arc : counterRotation-props.arc;
+    let next = counterRotation;
+    let rotation = props.rotations == props.prevRotation ? 'nada' : rotate(prev, next);
 
     const TheSpoke = styled.div`
         position: absolute;
         display: flex;
         justify-contnt: center;
         align-items: center;
-        transform: rotate(${-1*props.rotate}rad);
-        animation: transform 600ms ease-in-out;
+        animation: ${rotation} 600ms linear;
+        animation-fill-mode: forwards;
         width: ${width.px()};
         height: ${height.px()};
     `;
 
     return <TheSpoke key={props.index + Math.random()} style = {genCoordinates(props.item.x, props.item.y)} className="spoke">
         <div className="spoke-content">
-            <div>⬆️</div>
+            <div>{gen.emoji()}</div>
         </div>
     </TheSpoke>
 }
