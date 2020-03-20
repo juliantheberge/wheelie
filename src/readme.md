@@ -4,7 +4,9 @@ this is a library to create circle-based menus with react
 
 ## working notes
 
-Need to keep better track of options
+- keep track of objects
+- noticing that all the content decisions need to be passed in so that rerendering doesn't trigger a visual blip
+
 
 ## options
 

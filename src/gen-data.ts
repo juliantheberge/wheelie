@@ -1,6 +1,9 @@
 import * as randomWords from 'random-words';
 import * as W from './wheel'
 import { emojis } from './emojis';
+import * as React from 'react';
+
+
 
 // not sure if these 
 function genWord() {
@@ -9,7 +12,7 @@ function genWord() {
 
 function genCoord() {
 	return {
-		name: genWord(),
+		content: emoji(),
 		x: 0,
         y: 0,
         arc: 0
@@ -37,7 +40,6 @@ export function genItemLimits(min: number, max: number) {
         radius
 	}
 }
-
 
 export function emoji() {
 	let maxItems: number = numRange(0, emojis.length)

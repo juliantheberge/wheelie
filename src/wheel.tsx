@@ -9,7 +9,7 @@ import * as M from './math/index'
  */
 
 export interface Item {
-    name: string;
+    content: string;
     x: number;
     y: number;
     arc: number;
@@ -17,6 +17,7 @@ export interface Item {
 
 /** Wheel
  * this will be the master entry point for the lib
+ * if I can find a way to not re-render the spoke this library will be a lot easier to write because then the data wont all need to be recalculated / re sent
 */
 
 export interface WheelProps {
@@ -24,6 +25,7 @@ export interface WheelProps {
     organization: string;
     maxItems: number;
     itemRadius: number;
+    fill?: boolean;
     // circleRadius: number;
     // unit: string
     // clockwise: boolean;
@@ -34,11 +36,12 @@ interface WheelState {
     rotate: number; // actual radians
     rotations: number; // counter
     prevRotation: number;
-    error?: string ;
+    error?: string;
 }
 
 export class Wheel extends React.Component<WheelProps, WheelState> {
     arc: number;
+    maxItems: number;
     constructor(props: WheelProps) {
         super(props);
         this.state = {
@@ -47,7 +50,8 @@ export class Wheel extends React.Component<WheelProps, WheelState> {
             rotations: 0,
             prevRotation: 0
         };
-        this.arc = M.TOTAL / props.maxItems;
+        this.maxItems = this.props.fill ? this.props.items.length : this.props.maxItems;
+        this.arc = M.TOTAL / this.maxItems;
         this.clockwise = this.clockwise.bind(this);
         this.counterClockwise = this.counterClockwise.bind(this);
     }
@@ -69,8 +73,9 @@ export class Wheel extends React.Component<WheelProps, WheelState> {
 
     stacking() {
         console.log(this.state)
-        let { maxItems, items, itemRadius } = this.props;
-        let menuItems = M.getCoords(maxItems, items, 50);
+        let { items, itemRadius } = this.props;
+        let { maxItems } = this
+        let menuItems = M.getCoords(maxItems, items, itemRadius);
         let spokes = menuItems.map((item: Item, index: number) => {
             return <Spoke
                 key={index * Math.random()}
@@ -85,7 +90,8 @@ export class Wheel extends React.Component<WheelProps, WheelState> {
     }
 
     circle(spokes: React.ReactElement[]) {
-        let d = 100;
+        let { itemRadius } = this.props;
+        let d = itemRadius * 2;
         let width = new Dimension(d);
         let height = new Dimension(d);
         let circleStyle = {
@@ -188,7 +194,7 @@ function Spoke(props: MenuItemProps) {
 
     return <TheSpoke key={props.index + Math.random()} style = {genCoordinates(props.item.x, props.item.y)} className="spoke">
         <div className="spoke-content">
-            <div>{gen.emoji()}</div>
+            <div>{props.item.content}</div>
         </div>
     </TheSpoke>
 }
