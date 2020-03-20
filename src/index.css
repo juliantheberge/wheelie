@@ -3,6 +3,13 @@
   left: 50%;
   top: 50%;
 }
+.wheel {
+  border-radius: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #000;
+}
 .wheel-arrangment {
   position: relative;
   width: 20px;
@@ -15,4 +22,18 @@ body {
 }
 * {
   font-family: "Roboto";
+}
+.spoke {
+  color: #f5deb3;
+  width: 20px;
+  height: 20px;
+  left: 0px;
+  top: -50px;
+  transition: all 500ms ease-in-out;
+}
+.spoke-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import styled, { keyframes } from 'styled-components';
 
 /** Organization */
 
@@ -32,6 +33,7 @@ interface WheelState {
     circle: React.ReactElement | null;
     rotate: number; // actual radians
     rotations: number; // counter
+    prev: number;
     error?: string ;
 }
 
@@ -42,7 +44,8 @@ export class Wheel extends React.Component<WheelProps, WheelState> {
         this.state = {
             circle: null,
             rotate: 0,
-            rotations: 0
+            rotations: 0,
+            prev: 0
         };
         this.arc = M.TOTAL / props.maxItems;
         this.clockwise = this.clockwise.bind(this);
@@ -54,12 +57,11 @@ export class Wheel extends React.Component<WheelProps, WheelState> {
         this.organize();
     }
 
-
     organize() {
         if (this.props.organization === "stacking") {
             return this.stacking()
         } else {
-            this.error("opposite organization not supported yet")
+            this.error("other organization not supported yet")
         }
     }
 
@@ -67,34 +69,29 @@ export class Wheel extends React.Component<WheelProps, WheelState> {
 
     stacking() {
         console.log(this.state)
-        let {maxItems, items, itemRadius} = this.props;
-        let menuItems = M.getCoords(maxItems, items, 50)
-        let slices = menuItems.map((item: Item, index: number) => {
-            return <Spoke 
-                key={index*Math.random()} 
-                item = {item} 
-                index = {index} 
+        let { maxItems, items, itemRadius } = this.props;
+        let menuItems = M.getCoords(maxItems, items, 50);
+        let spokes = menuItems.map((item: Item, index: number) => {
+            return <Spoke
+                key={index * Math.random()}
+                item = {item}
+                index = {index}
+                prev = {this.state.prev}
                 rotate = {this.state.rotate}
                 rotations = {this.state.rotations}/>
         })
-        return this.circle(slices)
+        return this.circle(spokes);
     }
 
-    circle(slices: React.ReactElement[]) {
+    circle(spokes: React.ReactElement[]) {
         let d = 100;
         let width = new Dimension(d);
         let height = new Dimension(d);
-
         let circleStyle = {
-            background: "tomato",
-            borderRadius: "100%",
             width: width.px(),
             height: height.px(),
             marginLeft: width.half().neg().px(),
-            marginTop: height.half().neg().px(),
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center"
+            marginTop: height.half().neg().px()
         }
 
         let rotate = {
@@ -102,8 +99,8 @@ export class Wheel extends React.Component<WheelProps, WheelState> {
         }
 
         this.setState({
-            circle: <div style={circleStyle}>
-                <div style={rotate} className="wheel-arrangment">{slices}</div>
+            circle: <div className="wheel" style={circleStyle}>
+                <div style={rotate} className="wheel-arrangment">{spokes}</div>
             </div>
         })
     }
@@ -117,13 +114,15 @@ export class Wheel extends React.Component<WheelProps, WheelState> {
     clockwise() {
         this.setState({
             rotate: this.state.rotate + this.arc,
-            rotations: this.state.rotations+1
+            rotations: this.state.rotations + 1,
+            prev: this.state.rotate
         }, () => this.organize())
     }
     counterClockwise() {
         this.setState({
             rotate: this.state.rotate - this.arc,
-            rotations: this.state.rotations-1
+            rotations: this.state.rotations - 1,
+            prev: this.state.rotate
         }, () => this.organize())
     }
 
@@ -134,8 +133,8 @@ export class Wheel extends React.Component<WheelProps, WheelState> {
             return <React.Fragment>
                 {this.state.circle}
                 <div>
-                    <button onClick = {this.clockwise}>clockwise</button>
-                    <button onClick = {this.counterClockwise} >counter clockwise</button>
+                    <button onClick={this.clockwise}>clockwise</button>
+                    <button onClick={this.counterClockwise} >counter clockwise</button>
                 </div>
             </React.Fragment>
         }
@@ -151,40 +150,49 @@ interface MenuItemProps {
     index: number;
     rotations: number;
     rotate: number;
+    prev: number;
 }
 
 function Spoke(props: MenuItemProps) {
     let d = 20;
     let width = new Dimension(d);
     let height = new Dimension(d);
-    let sliceStyle = {
-        position: "absolute",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        background: "tomato",
-        color: "wheat",
-        // borderRadius: "100%",
-        width: width.px(),
-        height: height.px()
-    };
 
-    let withPosition = { ...sliceStyle, ...genCoordinates(props.item.x, props.item.y)} as React.CSSProperties
+    const rotate = (start: number, end: number) => keyframes`
+        from {
+            transform: rotate(${start.toString()}rad);
+        }
 
-    let withCounterRotation = {...withPosition, ...{
-        transform: `rotate(${-1*props.rotate}rad)`
-    }}
+        to {
+            transform: rotate(${end.toString()}rad)
+        }
+    `;
 
-    return <div key={props.index + Math.random()} style = {withCounterRotation} className="spoke">
-        <div style = {{
-                display:"flex",
-                justifyContent: "center",
-                alignItems: "center",
-                flexDirection: "column",
-            }}>
-            <p>{props.index}</p>
+    console.log({
+        prev: props.prev,
+        next: props.rotate,
+        rotations: props.rotations
+    })
+
+    // animation: ${rotate(props.prev, -1*props.rotate)} 600ms ease-in-out;
+    // animation-fill-mode: forwards;
+
+    const TheSpoke = styled.div`
+        position: absolute;
+        display: flex;
+        justify-contnt: center;
+        align-items: center;
+        transform: rotate(${-1*props.rotate}rad);
+        animation: transform 600ms ease-in-out;
+        width: ${width.px()};
+        height: ${height.px()};
+    `;
+
+    return <TheSpoke key={props.index + Math.random()} style = {genCoordinates(props.item.x, props.item.y)} className="spoke">
+        <div className="spoke-content">
+            <div>⬆️</div>
         </div>
-    </div>
+    </TheSpoke>
 }
 
 
