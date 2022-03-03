@@ -1,3 +1,11 @@
+Summary: Generate a rotatable wheel with arbitraty segmentation.
+
+To Do:
+
+- make design suck less
+
+# Boilerplate
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
