@@ -14,7 +14,7 @@
     "random-words": "^1.1.0",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
-    "react-scripts": "3.4.0",
+    "react-scripts": "5.0.1",
     "styled-components": "^5.0.1",
     "stylus": "^0.54.7",
     "typescript": "^3.8.3"
